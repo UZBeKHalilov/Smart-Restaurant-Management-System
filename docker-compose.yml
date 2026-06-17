@@ -1,0 +1,49 @@
+services:
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "SmartRest@2024"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost",
+             "-U", "sa", "-P", "SmartRest@2024", "-Q", "SELECT 1", "-No"]
+      interval: 10s
+      retries: 10
+      start_period: 30s
+
+  api:
+    build:
+      context: ./API
+      dockerfile: Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: >
+        Server=db,1433;Database=SmartRestaurantDb;
+        User Id=sa;Password=SmartRest@2024;
+        TrustServerCertificate=True;MultipleActiveResultSets=true
+      Jwt__Key: "SmartRestaurant_SuperSecret_JWT_Key_2024!"
+      Jwt__Issuer: "SmartRestaurantAPI"
+      Jwt__Audience: "SmartRestaurantClient"
+      ASPNETCORE_ENVIRONMENT: "Production"
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  ui:
+    build:
+      context: ./UI
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+
+volumes:
+  sqldata:

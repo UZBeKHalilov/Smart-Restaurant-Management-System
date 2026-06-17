@@ -40,7 +40,7 @@ interface NavItem { label: string; icon: string; route: string; roles?: string[]
             <mat-icon>account_circle</mat-icon>
             <div>
               <div class="user-name">{{ auth.currentUser()?.fullName }}</div>
-              <div class="user-role">{{ auth.currentUser()?.roles[0] }}</div>
+              <div class="user-role">{{ auth.currentUser()?.roles?.[0] }}</div>
             </div>
           </div>
           <button mat-button color="warn" (click)="auth.logout()">

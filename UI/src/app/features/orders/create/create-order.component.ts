@@ -124,8 +124,11 @@ interface CartItem { menuItem: MenuItem; quantity: number; notes: string; }
                 <button mat-raised-button color="primary" class="full-width submit-btn"
                         [disabled]="cart().length === 0 || !selectedTableId || submitting"
                         (click)="placeOrder()">
-                  @if (submitting) { <mat-spinner diameter="20" /> }
-                  @else { <mat-icon>send</mat-icon> Place Order }
+                  @if (submitting) {
+                    <ng-container><mat-spinner diameter="20" /></ng-container>
+                  } @else {
+                    <ng-container><mat-icon>send</mat-icon> Place Order</ng-container>
+                  }
                 </button>
               </mat-card-actions>
             </mat-card>
